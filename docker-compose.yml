@@ -39,10 +39,6 @@ services:
         source: ./logstash/pipeline
         target: /usr/share/logstash/pipeline
         read_only: true
-      - type: bind
-        source: ~/Documents/www/kaola-api/storage/logs
-        target: /usr/share/logstash/laravel_logs
-        read_only: true
     ports:
       - "5000:5000"
       - "9600:9600"
