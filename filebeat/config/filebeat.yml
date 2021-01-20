@@ -11,12 +11,6 @@ filebeat.inputs:
       target: fields
       fields:
         logs_type: 'laravel_log' 
-  - rename:
-      fields:
-        - from: "[host][name]"
-          to: "host"
-      ignore_missing: false
-      fail_on_error: true
 - type: log
   enabled: true
   paths:
@@ -39,7 +33,7 @@ filebeat.inputs:
       target: fields
       fields:
         logs_type: 'nginx_access_log'
-#output.logstash:
-#  hosts: ['elk_logstash_1:5000']
-output.console:
-  pretty: true
+output.logstash:
+  hosts: ['elk_logstash_1:5000']
+#output.console:
+#  pretty: true
