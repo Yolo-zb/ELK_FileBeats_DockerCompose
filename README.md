@@ -1,13 +1,18 @@
 # ELK_FileBeats_DockerCompose
 
-##How To Start
+## How To Start
 ```console
 $ docker-compose build
 $ docker-compose up
 ```
 
+<<<<<<< HEAD
 ##How To Set
 ###filebeat配置文件
+=======
+## How To Set
+### filebeat配置文件
+>>>>>>> 981e6a8698b5ef5fcdbfdb8f873cc44829842c0d
 > DockerCompose
 ```console
 filebeat:
@@ -85,6 +90,7 @@ output.logstash:
 #打印，可用docker logs -f ekl_filebeat_1 命令看到打印内容
 #output.console:
 #  pretty: true
+<<<<<<< HEAD
 ```
 
 ###logstash配置文件
@@ -118,10 +124,13 @@ logstash:
     depends_on:
       - elasticsearch
 
+=======
+>>>>>>> 981e6a8698b5ef5fcdbfdb8f873cc44829842c0d
 ```
 
-##默认ES跟Kibana用户名及密码
+## 默认ES跟Kibana用户名及密码
 ```console
 username:elastic
 password:changeme
 ```
+
