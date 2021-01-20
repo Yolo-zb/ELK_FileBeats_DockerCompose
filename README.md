@@ -1,18 +1,16 @@
 # ELK_FileBeats_DockerCompose
 
+## 简介
+> FileBeat + ELK的日志管理工具
+具体的可自行上网查阅
+
 ## How To Start
 ```console
 $ docker-compose build
 $ docker-compose up
 ```
-
-<<<<<<< HEAD
-##How To Set
-###filebeat配置文件
-=======
 ## How To Set
 ### filebeat配置文件
->>>>>>> 981e6a8698b5ef5fcdbfdb8f873cc44829842c0d
 > DockerCompose
 ```console
 filebeat:
@@ -90,7 +88,6 @@ output.logstash:
 #打印，可用docker logs -f ekl_filebeat_1 命令看到打印内容
 #output.console:
 #  pretty: true
-<<<<<<< HEAD
 ```
 
 ###logstash配置文件
@@ -102,17 +99,15 @@ logstash:
       args:
         ELK_VERSION: $ELK_VERSION
     volumes:
+      #系统配置文件
       - type: bind
         source: ./logstash/config/logstash.yml
         target: /usr/share/logstash/config/logstash.yml
         read_only: true
+      #接收Filebeat数据的配置文件
       - type: bind
         source: ./logstash/pipeline
         target: /usr/share/logstash/pipeline
-        read_only: true
-      - type: bind
-        source: ~/Documents/www/kaola-api/storage/logs
-        target: /usr/share/logstash/laravel_logs
         read_only: true
     ports:
       - "5000:5000"
@@ -123,11 +118,57 @@ logstash:
       - elk
     depends_on:
       - elasticsearch
-
-=======
->>>>>>> 981e6a8698b5ef5fcdbfdb8f873cc44829842c0d
 ```
+> ./logstash/pipeline/logstash.conf
+```console
+input {
+    #开放端口去接收数据
+	beats {
+		port => "5000"
+	}
+}
 
+## Add your filters / logstash plugins configuration here
+
+filter {
+  mutate {
+    #存到ES时有个必要字段host，但是filebeat放了在[host][name]里，这里是将[host][name]重命名为了host
+    rename => { "[host][name]" => "host" }
+  }
+}
+
+output {
+    #打印filebeat传过来的数据
+    #可用docker logs -f ekl_logstash_1 命令看到打印内容
+	stdout { codec => rubydebug }
+	#这里是连接ES，根据logs_type字段来建立索引，还会根据日期来命名好的
+	if([fields][logs_type]=="laravel_log"){
+		elasticsearch {
+			hosts => "elasticsearch:9200"
+			user => "elastic"
+			password => "changeme"
+			index => "laravel_logs_%{+YYYY_MM_dd}"
+		}
+	}
+	if([fields][logs_type]=="nginx_error_log"){
+                elasticsearch {
+                        hosts => "elasticsearch:9200"
+                        user => "elastic"
+                        password => "changeme"
+                        index => "nginx_error_logs_%{+YYYY_MM_dd}"
+                }
+        }
+
+	if([fields][logs_type]=="nginx_access_log"){
+                elasticsearch {
+                        hosts => "elasticsearch:9200"
+                        user => "elastic"
+                        password => "changeme"
+                        index => "nginx_access_%{+YYYY_MM_dd}"
+                }
+        }
+}
+```
 ## 默认ES跟Kibana用户名及密码
 ```console
 username:elastic
